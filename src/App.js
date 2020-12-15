@@ -1,18 +1,33 @@
 import React from 'react'
+import _ from 'lodash'
+
 // import * as BooksAPI from './BooksAPI'
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
 import './App.css'
 import BookShelf from './components/BookShelf';
+import { getAll, update } from './BooksAPI'
 
 class BooksApp extends React.Component {
+
+  constructor(props) {
+    super(props);
+    //this.state = {}
+    this.state = {books : {}}
+    getAll().then((data)=>(this.setState({books: data})))
+
+    this.changeShelfHandler = this.changeShelfHandler.bind(this);
+  }
+
+  changeShelfHandler(book, shelf) {
+    update(book, shelf).then(()=>getAll().then((data) => this.setState({books: data})))
+  }
+
   render() {
     return (
-
       <Router>
          <div className="app">
         <Switch>
@@ -47,15 +62,18 @@ class BooksApp extends React.Component {
               <div>
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Currently Reading</h2>
-                   <BookShelf></BookShelf>
+                   <BookShelf shelf={'currentlyReading'} books={ _.values(this.state.books).filter((book)=>
+                    (book.shelf === 'currentlyReading'))} changeShelfHandler={this.changeShelfHandler}></BookShelf>
                 </div>
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Want to Read</h2>
-                   <BookShelf></BookShelf>
+                   <BookShelf shelf={'wantToRead'} books={ _.values(this.state.books).filter((book)=>
+                    (book.shelf === 'wantToRead'))} changeShelfHandler={this.changeShelfHandler}></BookShelf>
                 </div>
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Read</h2>
-                  <BookShelf></BookShelf>
+                  <BookShelf shelf={'read'} books={ _.values(this.state.books).filter((book)=>
+                    (book.shelf === 'read'))} changeShelfHandler={this.changeShelfHandler}></BookShelf>
                 </div>
               </div>
             </div>

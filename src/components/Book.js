@@ -1,18 +1,26 @@
-import React, { Component } from 'react'
-import ShelfChange from './ShelfChange'
+import React from 'react'
 
-class Book extends Component {
-    render() {
-        return (
+function Book(props) {
+    const { shelf, book, changeShelfHandler } = props
+    let thumbnail = book.imageLinks.thumbnail || ""
+    return (
         <div className="book">
             <div className="book-top">
-            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url("http://books.google.com/books/content?id=uu1mC6zWNTwC&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE73pGHfBNSsJG9Y8kRBpmLUft9O4BfItHioHolWNKOdLavw-SLcXADy3CPAfJ0_qMb18RmCa7Ds1cTdpM3dxAGJs8zfCfm8c6ggBIjzKT7XR5FIB53HHOhnsT7a0Cc-PpneWq9zX&source=gbs_api")' }}></div>
-                <ShelfChange></ShelfChange>
+            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${thumbnail})`}}></div>
+            <div className="book-shelf-changer">
+                <select value={shelf} onChange={(e)=>(changeShelfHandler(book, e.target.value))}>
+                    <option value="move" disabled>Move to...</option>
+                    <option value="currentlyReading">Currently Reading</option>
+                    <option value="wantToRead">Want to Read</option>
+                    <option value="read">Read</option>
+                    <option value="none">None</option>
+                </select>
+            </div>
             </div>
             <div className="book-title">1776</div>
             <div className="book-authors">David McCullough</div>
-        </div>)
-    }
+        </div>
+    )
 }
 
 export default Book

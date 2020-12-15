@@ -1,18 +1,23 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Book from './Book'
+import _ from 'lodash'
 
-class BookShelf extends Component {
-    render() {
-        return (
-            <div className="bookshelf-books">
-                <ol className="books-grid">
-                    <li>
-                        <Book></Book>
-                    </li>
-                </ol>
-            </div>
-        )
-    }
+function BookShelf(props) {
+    const { shelf, changeShelfHandler, books } = props
+    return (
+        <div className="bookshelf-books">
+        <ol className="books-grid">
+                {   _.values(books).map(
+                    (book) =>
+                    <li key={book.id + 'li'}>
+                    <Book key={book.id} shelf={shelf} changeShelfHandler={changeShelfHandler} book={book}>
+                    </Book>
+                    </li>)
+                }
+            </ol>
+        </div>
+    )
+
 }
 
 export default BookShelf

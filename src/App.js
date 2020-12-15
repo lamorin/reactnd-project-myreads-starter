@@ -16,14 +16,21 @@ class BooksApp extends React.Component {
   constructor(props) {
     super(props);
     //this.state = {}
-    this.state = {books : {}}
+    this.state = {books : {}, search : []}
     getAll().then((data)=>(this.setState({books: data})))
 
     this.changeShelfHandler = this.changeShelfHandler.bind(this);
+    this.searchChangeHandler = this.searchChangeHandler.bind(this);
   }
 
   changeShelfHandler(book, shelf) {
     update(book, shelf).then(()=>getAll().then((data) => this.setState({books: data})))
+  }
+
+  searchChangeHandler(e) {
+    this.setState({search: _.uniq([...this.state.books.filter((book)=>{
+        return book.title.toLowerCase().indexOf(e.target.value.toLowerCase())> -1
+    }), ...this.state.books.filter((book)=>{ return book.authors.join(' ').toLowerCase().indexOf(e.target.value.toLowerCase()) > -1 })] )})
   }
 
   render() {
@@ -44,8 +51,8 @@ class BooksApp extends React.Component {
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
-                <input type="text" placeholder="Search by title or author"/>
-
+                <input type="text" placeholder="Search by title or author" onChange={this.searchChangeHandler}/>
+                <BookShelf  books={ this.state.search } changeShelfHandler={this.changeShelfHandler}></BookShelf>
               </div>
             </div>
             <div className="search-books-results">

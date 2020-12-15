@@ -5,32 +5,43 @@ import _ from 'lodash'
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Link
 } from "react-router-dom";
 import './App.css'
 import BookShelf from './components/BookShelf';
 import { getAll, update } from './BooksAPI'
+import SearchResults from './components/SearchResults';
 
 class BooksApp extends React.Component {
 
   constructor(props) {
     super(props);
     //this.state = {}
-    this.state = {books : {}, search : []}
+    this.state = {books : {}, search : [], searchText: ""}
     getAll().then((data)=>(this.setState({books: data})))
 
     this.changeShelfHandler = this.changeShelfHandler.bind(this);
     this.searchChangeHandler = this.searchChangeHandler.bind(this);
+    this.updateSearch = this.updateSearch.bind(this);
   }
 
   changeShelfHandler(book, shelf) {
+    console.log('changeShelf')
     update(book, shelf).then(()=>getAll().then((data) => this.setState({books: data})))
   }
 
   searchChangeHandler(e) {
+    this.setState({searchText: e.target.value.toLowerCase()})
     this.setState({search: _.uniq([...this.state.books.filter((book)=>{
         return book.title.toLowerCase().indexOf(e.target.value.toLowerCase())> -1
     }), ...this.state.books.filter((book)=>{ return book.authors.join(' ').toLowerCase().indexOf(e.target.value.toLowerCase()) > -1 })] )})
+  }
+
+  updateSearch(book, shelf) {
+    update(book, shelf).then(()=>getAll().then((data) => this.setState({books: data}))).then(
+      ()=>(this.setState({search: _.uniq([...this.state.books.filter((book)=>book.title.toLowerCase().indexOf(this.state.searchText.toLowerCase())> -1), ...this.state.books.filter((book)=>{ return book.authors.join(' ').toLowerCase().indexOf(this.state.searchText.toLowerCase()) > -1 })] )}))
+    )
   }
 
   render() {
@@ -41,7 +52,9 @@ class BooksApp extends React.Component {
           <Route path="/search">
             <div className="search-books">
             <div className="search-books-bar">
-              <button className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</button>
+              <Link to="/about"><button className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</button></Link>
+
+
               <div className="search-books-input-wrapper">
                 {/*
                   NOTES: The search from BooksAPI is limited to a particular set of search terms.
@@ -52,7 +65,7 @@ class BooksApp extends React.Component {
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
                 <input type="text" placeholder="Search by title or author" onChange={this.searchChangeHandler}/>
-                <BookShelf  books={ this.state.search } changeShelfHandler={this.changeShelfHandler}></BookShelf>
+                <SearchResults  books={ this.state.search } changeShelfHandler={this.updateSearch}></SearchResults>
               </div>
             </div>
             <div className="search-books-results">

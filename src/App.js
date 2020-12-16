@@ -32,8 +32,10 @@ class BooksApp extends React.Component {
   }
 
   searchChangeHandler(e) {
+    console.log(e.target.value)
     this.setState({searchText: e.target.value.toLowerCase()})
-    this.setState({search: _.uniq([...this.state.books.filter((book)=>{
+    this.state.searchText.length <= 3 && this.setState({search: []})
+    this.state.searchText.length > 3 && this.setState({search: _.uniq([...this.state.books.filter((book)=>{
         return book.title.toLowerCase().indexOf(e.target.value.toLowerCase())> -1
     }), ...this.state.books.filter((book)=>{ return book.authors.join(' ').toLowerCase().indexOf(e.target.value.toLowerCase()) > -1 })] )})
   }
@@ -98,7 +100,7 @@ class BooksApp extends React.Component {
               </div>
             </div>
             <div className="open-search">
-              <Link to="/search"><button onClick={() => this.setState({ showSearchPage: true })}>Add a book</button></Link>
+              <Link to="/search"><button onClick={() => this.setState({ search: [] })}>Add a book</button></Link>
             </div>
           </div>
           </Route>

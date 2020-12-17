@@ -10,7 +10,7 @@ function BookShelf(props) {
                 {   _.values(books).map(
                     (book) =>
                     <li key={book.id + 'li'}>
-                    <Book key={book.id} shelf={shelf} changeShelfHandler={changeShelfHandler} book={book}>
+                    <Book  shelf={shelf} changeShelfHandler={changeShelfHandler} book={book}>
                     </Book>
                     </li>)
                 }

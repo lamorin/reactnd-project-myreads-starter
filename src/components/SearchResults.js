@@ -10,7 +10,7 @@ function SearchResults(props) {
                 {   _.values(books).map(
                     (book) =>
                     book.imageLinks !== undefined &&
-                    <li key={book.id + 'li'}>
+                    <li key={book.id}>
                          <Book key={book.id} shelf={book.shelf} changeShelfHandler={changeShelfHandler} book={book}>
                     </Book>
                     </li>)

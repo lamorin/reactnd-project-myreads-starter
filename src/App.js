@@ -35,7 +35,6 @@ class BooksApp extends React.Component {
     console.log(query)
     query.length <= 3 &&  this.setState({search: []})
     query.length  >= 3 &&  search(query).then((data)=>{
-      console.log('searched')
       this.setState({search: data});
     })
 

@@ -9,8 +9,9 @@ function SearchResults(props) {
         <ol className="books-grid">
                 {   _.values(books).map(
                     (book) =>
+                    book.imageLinks !== undefined &&
                     <li key={book.id + 'li'}>
-                    <Book key={book.id} shelf={book.shelf} changeShelfHandler={changeShelfHandler} book={book}>
+                         <Book key={book.id} shelf={book.shelf} changeShelfHandler={changeShelfHandler} book={book}>
                     </Book>
                     </li>)
                 }

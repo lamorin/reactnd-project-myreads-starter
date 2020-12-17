@@ -2,7 +2,7 @@ import React from 'react'
 
 function Book(props) {
     const { shelf, book, changeShelfHandler } = props
-    let thumbnail = book.imageLinks.thumbnail || ""
+    let thumbnail = book.imageLinks !== undefined ? book.imageLinks.thumbnail : ""
     return (
         <div className="book">
             <div className="book-top">
@@ -17,7 +17,7 @@ function Book(props) {
             </div>
             </div>
             <div className="book-title">{book.title}</div>
-            <div className="book-authors">{book.authors.join(', ')}</div>
+            <div className="book-authors">{book.authors !== undefined && book.authors.join(', ')}</div>
         </div>
     )
 }

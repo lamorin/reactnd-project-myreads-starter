@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import './App.css'
 import BookShelf from './components/BookShelf';
-import { getAll, update } from './BooksAPI'
+import { getAll, update, search } from './BooksAPI'
 import SearchResults from './components/SearchResults';
 
 class BooksApp extends React.Component {
@@ -27,17 +27,18 @@ class BooksApp extends React.Component {
   }
 
   changeShelfHandler(book, shelf) {
-    console.log('changeShelf')
     update(book, shelf).then(()=>getAll().then((data) => this.setState({books: data})))
   }
 
   searchChangeHandler(e) {
-    console.log(e.target.value)
-    this.setState({searchText: e.target.value.toLowerCase()})
-    this.state.searchText.length <= 3 && this.setState({search: []})
-    this.state.searchText.length > 3 && this.setState({search: _.uniq([...this.state.books.filter((book)=>{
-        return book.title.toLowerCase().indexOf(e.target.value.toLowerCase())> -1
-    }), ...this.state.books.filter((book)=>{ return book.authors.join(' ').toLowerCase().indexOf(e.target.value.toLowerCase()) > -1 })] )})
+    const query = e.target.value
+    console.log(query)
+    query.length <= 3 &&  this.setState({search: []})
+    query.length  >= 3 &&  search(query).then((data)=>{
+      console.log('searched')
+      this.setState({search: data});
+    })
+
   }
 
   updateSearch(book, shelf) {

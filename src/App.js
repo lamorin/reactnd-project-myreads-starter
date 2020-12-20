@@ -1,104 +1,104 @@
-import React from 'react'
-import _ from 'lodash'
+import React from 'react';
+import _ from 'lodash';
 
 // import * as BooksAPI from './BooksAPI'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
-import './App.css'
-import BookShelf from './components/BookShelf'
-import { getAll, update, search } from './BooksAPI'
-import SearchResults from './components/SearchResults'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import './App.css';
+import BookShelf from './components/BookShelf';
+import { getAll, update, search } from './BooksAPI';
+import SearchResults from './components/SearchResults';
 
 class BooksApp extends React.Component {
     constructor(props) {
-        super(props)
-        this.state = { books: {}, search: [], searchText: '' }
-        getAll().then(data => this.setState({ books: data }))
+        super(props);
+        this.state = { books: {}, search: [], searchText: '' };
+        getAll().then(data => this.setState({ books: data }));
 
-        this.changeShelfHandler = this.changeShelfHandler.bind(this)
-        this.searchChangeHandler = this.searchChangeHandler.bind(this)
-        this.updateSearch = this.updateSearch.bind(this)
-        this.updateSearchText = this.updateSearchText.bind(this)
+        this.changeShelfHandler = this.changeShelfHandler.bind(this);
+        this.searchChangeHandler = this.searchChangeHandler.bind(this);
+        this.updateSearch = this.updateSearch.bind(this);
+        this.updateSearchText = this.updateSearchText.bind(this);
     }
 
     changeShelfHandler(book, shelf) {
-        const updatedBook = { ...book, shelf: shelf }
-
-        //this.state.search.filter(
-        //    bookInSearch => bookInSearch.id === book.id
-        //)[0].shelf = shelf
-
         const bookInLibrary = this.state.books.filter(
             bookInLibrary => bookInLibrary.id === book.id
-        )[0]
+        )[0];
 
         if (bookInLibrary !== undefined) {
-            bookInLibrary.shelf = shelf
+            bookInLibrary.shelf = shelf;
         }
 
         this.state.books.filter(
             bookInLibrary => bookInLibrary.id === book.id
-        )[0].shelf = shelf
+        )[0].shelf = shelf;
 
-        this.setState(Object.assign(this.state.search))
+        this.setState(Object.assign(this.state.search));
 
         update(book, shelf).then(() =>
             getAll().then(data => {
-                this.setState({ books: data })
+                this.setState({ books: data });
 
                 this.state.search.map(bookFromSearch => {
                     _.values(this.state.books).map(bookInLibrary => {
                         if (bookFromSearch.id === bookInLibrary.id) {
-                            bookFromSearch.shelf = bookInLibrary.shelf
+                            bookFromSearch.shelf = bookInLibrary.shelf;
                         }
-                    })
-                })
+                        return bookFromSearch;
+                    });
+                    return bookFromSearch;
+                });
 
-                this.forceUpdate()
+                this.forceUpdate();
             })
-        )
+        );
     }
 
     updateSearchText(e) {
-        this.setState({ searchText: e.target.value })
-        this.searchChangeHandler()
+        this.setState({ searchText: e.target.value });
+        this.searchChangeHandler();
     }
 
     searchChangeHandler() {
-        const originalquery = this.state.searchText.toLowerCase().trim()
-        originalquery.length <= 3 && this.setState({ search: [] })
+        const originalquery = this.state.searchText.toLowerCase().trim();
+        originalquery.length <= 3 && this.setState({ search: [] });
 
         const reducer = (originalquery, accumulator) => {
             originalquery.split(' ').map(query => {
                 search(query).then(data => {
-                    const dataToBeAdded = data.error === undefined ? data : []
+                    const dataToBeAdded = data.error === undefined ? data : [];
                     accumulator = _.uniqBy(
                         [...accumulator, ...dataToBeAdded],
                         book => book.id
-                    )
+                    );
                     this.setState(() => {
-                        return { search: accumulator }
-                    })
+                        return { search: accumulator };
+                    });
 
                     this.state.search.map(bookFromSearch => {
                         _.values(this.state.books).map(bookInLibrary => {
                             if (bookFromSearch.id === bookInLibrary.id) {
-                                bookFromSearch.shelf = bookInLibrary.shelf
+                                bookFromSearch.shelf = bookInLibrary.shelf;
                             }
-                        })
-                    })
+                            return bookFromSearch;
+                        });
+                        return bookFromSearch;
+                    });
 
-                    this.forceUpdate()
-                })
-            })
-        }
+                    this.forceUpdate();
+                });
 
-        originalquery.length >= 3 && reducer(originalquery, [])
+                return this.state;
+            });
+        };
+
+        originalquery.length >= 3 && reducer(originalquery, []);
     }
 
     updateSearch(book, shelf) {
         update(book, shelf)
             .then(() => getAll().then(data => this.setState({ books: data })))
-            .then(this.searchChangeHandler())
+            .then(this.searchChangeHandler());
     }
 
     render() {
@@ -227,8 +227,8 @@ class BooksApp extends React.Component {
                     </Switch>
                 </div>
             </Router>
-        )
+        );
     }
 }
 
-export default BooksApp
+export default BooksApp;

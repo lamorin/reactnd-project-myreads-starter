@@ -6,15 +6,21 @@ function SearchResults(props) {
     const { changeShelfHandler, books } = props
     return (
         <div className="bookshelf-books">
-        <ol className="books-grid">
-                {   _.values(books).map(
-                    (book) =>
-                    book.imageLinks !== undefined &&
-                    <li key={book.id}>
-                         <Book key={book.id} shelf={book.shelf} changeShelfHandler={changeShelfHandler} book={book}>
-                    </Book>
-                    </li>)
+            <ol className="books-grid">
+
+                {
+                _.values(books).map(
+                    (book) => {
+                        return (<li key={book.id}>
+                            <Book key={book.id} shelf={book.shelf !==  undefined ? book.shelf : 'none'} changeShelfHandler={changeShelfHandler} book={book}></Book>
+                        </li>)
+                    })
                 }
+
+
+
+
+
             </ol>
         </div>
     )

@@ -32,6 +32,8 @@ class BooksApp extends React.Component {
                         }
                     })
                 })
+
+                this.forceUpdate()
             })
         )
     }
@@ -45,7 +47,7 @@ class BooksApp extends React.Component {
         const originalquery = this.state.searchText.toLowerCase().trim()
         originalquery.length <= 3 && this.setState({ search: [] })
 
-        const reducer = (originalquery, accumulator) =>
+        const reducer = (originalquery, accumulator) => {
             originalquery.split(' ').map(query => {
                 search(query).then(data => {
                     const dataToBeAdded = data.error === undefined ? data : []
@@ -56,8 +58,19 @@ class BooksApp extends React.Component {
                     this.setState(() => {
                         return { search: accumulator }
                     })
+
+                    this.state.search.map(bookFromSearch => {
+                        _.values(this.state.books).map(bookInLibrary => {
+                            if (bookFromSearch.id === bookInLibrary.id) {
+                                bookFromSearch.shelf = bookInLibrary.shelf
+                            }
+                        })
+                    })
+
+                    this.forceUpdate()
                 })
             })
+        }
 
         originalquery.length >= 3 && reducer(originalquery, [])
     }

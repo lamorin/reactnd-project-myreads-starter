@@ -16,15 +16,9 @@ function SearchResults(props) {
                         </li>)
                     })
                 }
-
-
-
-
-
             </ol>
         </div>
     )
-
 }
 
 export default SearchResults

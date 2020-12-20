@@ -21,6 +21,26 @@ class BooksApp extends React.Component {
     }
 
     changeShelfHandler(book, shelf) {
+        const updatedBook = { ...book, shelf: shelf }
+
+        //this.state.search.filter(
+        //    bookInSearch => bookInSearch.id === book.id
+        //)[0].shelf = shelf
+
+        const bookInLibrary = this.state.books.filter(
+            bookInLibrary => bookInLibrary.id === book.id
+        )[0]
+
+        if (bookInLibrary !== undefined) {
+            bookInLibrary.shelf = shelf
+        }
+
+        this.state.books.filter(
+            bookInLibrary => bookInLibrary.id === book.id
+        )[0].shelf = shelf
+
+        this.setState(Object.assign(this.state.search))
+
         update(book, shelf).then(() =>
             getAll().then(data => {
                 this.setState({ books: data })

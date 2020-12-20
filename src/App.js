@@ -17,31 +17,91 @@ class BooksApp extends React.Component {
 
   constructor(props) {
     super(props);
-    //this.state = {}
     this.state = {books : {}, search : [], searchText: ""}
     getAll().then((data)=>(this.setState({books: data})))
 
     this.changeShelfHandler = this.changeShelfHandler.bind(this);
     this.searchChangeHandler = this.searchChangeHandler.bind(this);
     this.updateSearch = this.updateSearch.bind(this);
+    this.updateSearchText = this.updateSearchText.bind(this);
   }
 
   changeShelfHandler(book, shelf) {
-    update(book, shelf).then(()=>getAll().then((data) => this.setState({books: data})))
+    update(book, shelf).then(()=>getAll().then((data) => {
+
+      this.setState({books: data})
+
+
+          this.state.search.map((bookFromSearch)=>{
+              _.values(this.state.books).map((bookInLibrary)=>{
+
+                if (bookFromSearch.id === bookInLibrary.id) {
+
+                  bookFromSearch.shelf = bookInLibrary.shelf
+
+                }
+            })
+            }
+        )
+
+
+
+        this.forceUpdate()
+
+
+    }
+
+
+
+
+
+      )
+
+    )
+}
+
+
+
+
+
+
+
+
+
+
+  updateSearchText(e) {
+
+    this.setState({searchText: e.target.value})
+    this.searchChangeHandler()
   }
 
-  searchChangeHandler(e) {
-    const query = e.target.value
-    query.length <= 3 &&  this.setState({search: []})
-    query.length  >= 3 &&  search(query).then((data)=>{
-      this.setState({search: data});
-    })
 
+  searchChangeHandler() {
+
+    const originalquery = this.state.searchText.toLowerCase().trim()
+    originalquery.length <= 3 &&  this.setState({search: []})
+
+    const reducer = (originalquery, accumulator) => originalquery.split(' ').map(
+      (query) => { search(query).then(
+        (data) =>{
+
+        const dataToBeAdded =  data.error === undefined ? data : []
+        accumulator = _.uniqBy([...accumulator, ...dataToBeAdded], book => book.id)
+        this.setState(()=>{return  { search: accumulator}  });
+
+
+        }
+        )
+      }
+    )
+
+    originalquery.length >= 3 && reducer(originalquery, [])
   }
 
   updateSearch(book, shelf) {
+
     update(book, shelf).then(()=>getAll().then((data) => this.setState({books: data}))).then(
-      ()=>(this.setState({search: _.uniq([...this.state.books.filter((book)=>book.title.toLowerCase().indexOf(this.state.searchText.toLowerCase())> -1), ...this.state.books.filter((book)=>{ return book.authors.join(' ').toLowerCase().indexOf(this.state.searchText.toLowerCase()) > -1 })] )}))
+      this.searchChangeHandler()
     )
   }
 
@@ -65,8 +125,8 @@ class BooksApp extends React.Component {
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
-                <input type="text" placeholder="Search by title or author" onChange={this.searchChangeHandler}/>
-                <SearchResults  books={ this.state.search } changeShelfHandler={this.updateSearch}></SearchResults>
+                <input type="text" placeholder="Search by title or author" onChange={this.updateSearchText}/>
+                <SearchResults  books={ this.state.search } changeShelfHandler={this.changeShelfHandler}></SearchResults>
               </div>
             </div>
             <div className="search-books-results">

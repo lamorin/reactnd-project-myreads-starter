@@ -8,7 +8,10 @@ function SearchResults(props) {
         <div className="bookshelf-books">
             <ol className="books-grid">
 
-                {
+                {   books.error !== undefined && (<div>No books were found</div>) }
+
+                 {   books.error === undefined &&
+
                 _.values(books).map(
                     (book) => {
                         return (<li key={book.id}>

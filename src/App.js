@@ -29,10 +29,6 @@ class BooksApp extends React.Component {
             bookInLibrary.shelf = shelf;
         }
 
-        this.state.books.filter(
-            bookInLibrary => bookInLibrary.id === book.id
-        )[0].shelf = shelf;
-
         this.setState(Object.assign(this.state.search));
 
         update(book, shelf).then(() =>
